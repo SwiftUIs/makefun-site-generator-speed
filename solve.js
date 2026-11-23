@@ -322,18 +322,12 @@ function endsParagraph(line) {
   if (c === 45 || c === 42) return HR_RE.test(line); // - *
   return false;
 }
-const NON_ASCII = /[^\x00-\x7F]/;
 // Count words (runs of non-whitespace) in one line; unicode spaces handled.
+// Single pass: the previous version first scanned the whole line with a
+// non-ASCII regex and then looped again, so every line was scanned twice.
 function countWordsLine(line) {
   let n = 0;
   let inW = false;
-  if (!NON_ASCII.test(line)) {
-    for (let i = 0; i < line.length; i++) {
-      if (line.charCodeAt(i) <= 32) inW = false;
-      else if (!inW) { inW = true; n++; }
-    }
-    return n;
-  }
   for (let i = 0; i < line.length; i++) {
     const cc = line.charCodeAt(i);
     let ws;
